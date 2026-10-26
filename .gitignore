@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 *.so
 .Python
+.ignore
+
 build/
 develop-eggs/
 dist/

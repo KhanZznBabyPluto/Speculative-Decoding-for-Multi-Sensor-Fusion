@@ -1,0 +1,105 @@
+diff --git a/projects/mmdet3d_plugin/models/utils/attention.py b/projects/mmdet3d_plugin/models/utils/attention.py
+index 3559b65..970df2a 100644
+--- a/projects/mmdet3d_plugin/models/utils/attention.py
++++ b/projects/mmdet3d_plugin/models/utils/attention.py
+@@ -18,8 +18,18 @@ from einops import rearrange
+ from mmcv.runner import auto_fp16
+ from mmcv.runner.base_module import BaseModule
+ 
+-from flash_attn.flash_attn_interface import flash_attn_unpadded_kvpacked_func
+-from flash_attn.bert_padding import unpad_input, pad_input, index_first_axis
++# PATCH (stage 04): guard flash_attn imports so the module can be loaded
++# without flash-attn installed. Inference paths that use PETRMultiheadAttention
++# (the non-flash class) don't need these symbols; FlashAttention/FlashMHA
++# will raise if anyone actually instantiates them.
++try:
++    from flash_attn.flash_attn_interface import flash_attn_unpadded_kvpacked_func
++    from flash_attn.bert_padding import unpad_input, pad_input, index_first_axis
++    _FLASH_ATTN_AVAILABLE = True
++except ImportError:
++    flash_attn_unpadded_kvpacked_func = None
++    unpad_input = pad_input = index_first_axis = None
++    _FLASH_ATTN_AVAILABLE = False
+ 
+ 
+ def _in_projection_packed(q, k, v, w, b = None):
+diff --git a/tools/create_data_nusc.py b/tools/create_data_nusc.py
+index b07c34f..54f21dc 100755
+--- a/tools/create_data_nusc.py
++++ b/tools/create_data_nusc.py
+@@ -63,12 +63,14 @@ if __name__ == '__main__':
+             info_prefix=args.extra_tag,
+             version=train_version,
+             max_sweeps=args.max_sweeps)
+-        test_version = f'{args.version}-test'
+-        nuscenes_data_prep(
+-            root_path=args.root_path,
+-            info_prefix=args.extra_tag,
+-            version=test_version,
+-            max_sweeps=args.max_sweeps)
++        # PATCH (stage 04): skip v1.0-test; we don't have the test split and
++        # only need trainval-derived val infos for Phase 0/1/2.
++        # test_version = f'{args.version}-test'
++        # nuscenes_data_prep(
++        #     root_path=args.root_path,
++        #     info_prefix=args.extra_tag,
++        #     version=test_version,
++        #     max_sweeps=args.max_sweeps)
+     elif args.version == 'v1.0-mini':
+         train_version = f'{args.version}'
+         nuscenes_data_prep(
+diff --git a/tools/data_converter/nuscenes_converter.py b/tools/data_converter/nuscenes_converter.py
+index abfe222..10bc1c6 100644
+--- a/tools/data_converter/nuscenes_converter.py
++++ b/tools/data_converter/nuscenes_converter.py
+@@ -166,6 +166,19 @@ def _fill_trainval_infos(nusc,
+     val_nusc_infos = []
+     frame_idx = 0
+     for sample in mmcv.track_iter_progress(nusc.sample):
++        # PATCH (stage 04, val-only): skip train samples early so we don't
++        # spend ~3 hours on per-sample 3D→2D projection + sweep backtracking
++        # for samples we won't use. Phases 0/1/2 only need val.
++        #
++        # PATCH (stage 07, delay fine-tune): made switchable instead of
++        # hard-coded — the delay-augmented conditioning fine-tune needs train
++        # infos for the 62 train scenes that blob 01 covers. Default is
++        # unchanged (val-only, fast); set STREAMPETR_INCLUDE_TRAIN=1 to also
++        # emit train infos. The partial-blob check below still skips samples
++        # whose files are absent, so this stays cheap on a partial download.
++        if (sample['scene_token'] in train_scenes
++                and os.environ.get('STREAMPETR_INCLUDE_TRAIN', '0') != '1'):
++            continue
+         lidar_token = sample['data']['LIDAR_TOP']
+         sd_rec = nusc.get('sample_data', sample['data']['LIDAR_TOP'])
+         cs_record = nusc.get('calibrated_sensor',
+@@ -173,7 +186,12 @@ def _fill_trainval_infos(nusc,
+         pose_record = nusc.get('ego_pose', sd_rec['ego_pose_token'])
+         lidar_path, boxes, _ = nusc.get_sample_data(lidar_token)
+ 
+-        mmcv.check_file_exist(lidar_path)
++        # PATCH (stage 04, partial-blob tolerance): nuScenes metadata covers all
++        # ~34k samples even when only blob 01 of 10 is on disk. Skip samples
++        # whose LiDAR file is absent instead of crashing. Camera and sweep files
++        # are packaged in the same blob, so if LiDAR is present the rest is too.
++        if not osp.isfile(lidar_path):
++            continue
+ 
+ 
+         info = {
+diff --git a/tools/test.py b/tools/test.py
+index d48206c..e43e00d 100755
+--- a/tools/test.py
++++ b/tools/test.py
+@@ -221,9 +221,9 @@ def main():
+         model.PALETTE = dataset.PALETTE
+ 
+     if not distributed:
+-        assert False
+-        # model = MMDataParallel(model, device_ids=[0])
+-        # outputs = single_gpu_test(model, data_loader, args.show, args.show_dir)
++        # PATCH (stage 04): re-enable single-GPU path the authors disabled.
++        model = MMDataParallel(model, device_ids=[0])
++        outputs = single_gpu_test(model, data_loader, args.show, args.show_dir)
+     else:
+         model = MMDistributedDataParallel(
+             model.cuda(),

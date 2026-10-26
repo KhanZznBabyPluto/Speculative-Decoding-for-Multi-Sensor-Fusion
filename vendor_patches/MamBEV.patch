@@ -1,0 +1,129 @@
+diff --git a/projects/MAMBEV/mambev/hydra/__init__.py b/projects/MAMBEV/mambev/hydra/__init__.py
+index 6d800ad..f38b397 100755
+--- a/projects/MAMBEV/mambev/hydra/__init__.py
++++ b/projects/MAMBEV/mambev/hydra/__init__.py
+@@ -2,5 +2,7 @@ from .hydra import Hydra
+ from .matrix_mixer import MatrixMixer
+ from .ops import (
+     hydra_split_conv1d_scan_combined,
+-    hydra_split_conv1d_scan_combined_custom,
++    # PATCH (stage 05): hydra_split_conv1d_scan_combined_custom isn't defined
++    # in ops.py and is referenced nowhere else in the repo — dead import.
++    # hydra_split_conv1d_scan_combined_custom,
+ )
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_post_hydra_block.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_post_hydra_block.py
+index 2509ace..39ea3a7 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_post_hydra_block.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_post_hydra_block.py
+@@ -7,7 +7,7 @@ import torch
+ from mmdet3d.registry import MODELS
+ from mmengine.runner import autocast
+ 
+-from ..base_hydra_block import BaseHydraBlock, ZeroParams
++from ..base_block import BaseHydraBlock, ZeroParams  # PATCH (stage 05): upstream renamed base_hydra_block.py -> base_block.py but missed this import
+ from ..mixins import VConvMixin
+ 
+ 
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_pre_hydra_block.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_pre_hydra_block.py
+index b7fec27..c344103 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_pre_hydra_block.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/post_pre_hydra_block.py
+@@ -7,7 +7,7 @@ import torch
+ from mmdet3d.registry import MODELS
+ from mmengine.runner import autocast
+ 
+-from ..base_hydra_block import BaseHydraBlock, ZeroParams
++from ..base_block import BaseHydraBlock, ZeroParams  # PATCH (stage 05): upstream renamed base_hydra_block.py -> base_block.py but missed this import
+ from ..mixins import QueryActivationMixinV3, VConvMixin
+ 
+ 
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_post_hydra_block.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_post_hydra_block.py
+index c5292dc..8ad5302 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_post_hydra_block.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_post_hydra_block.py
+@@ -9,7 +9,7 @@ from einops import rearrange, repeat
+ from mmdet3d.registry import MODELS
+ from mmengine.runner import autocast
+ 
+-from ..base_hydra_block import BaseHydraBlock, ZeroParams
++from ..base_block import BaseHydraBlock, ZeroParams  # PATCH (stage 05): upstream renamed base_hydra_block.py -> base_block.py but missed this import
+ from ..mixins import ConvMixin
+ 
+ 
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_pre_hydra_block.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_pre_hydra_block.py
+index d414c16..a12b3f3 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_pre_hydra_block.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/conv_gate_ablations/pre_pre_hydra_block.py
+@@ -9,7 +9,7 @@ from einops import repeat
+ from mmdet3d.registry import MODELS
+ from mmengine.runner import autocast
+ 
+-from ..base_hydra_block import BaseHydraBlock, ZeroParams
++from ..base_block import BaseHydraBlock, ZeroParams  # PATCH (stage 05): upstream renamed base_hydra_block.py -> base_block.py but missed this import
+ from ..mixins import ConvMixin
+ 
+ 
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/__init__.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/__init__.py
+index 8c6ee80..cd93d3b 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/__init__.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/__init__.py
+@@ -1,27 +1,33 @@
++# PATCH (stage 05): upstream __init__ references files that don't exist
++# in the repo (offset_mixin.py, weighted_mixin.py). The four symbols below
++# (OffsetMixin, WeightMixin, LocationWeightMixin, DeformableLocationWeightMixin)
++# are referenced ONLY here — no config or class in the repo uses them — so
++# they are dead imports left over from a removed feature. Commenting them
++# out so the package import succeeds for the MamBEV-small inference path.
+ from .debug_mixin import DebugRefMixin
+-from .offset_mixin import OffsetMixin
++# from .offset_mixin import OffsetMixin                  # missing upstream
+ from .query_activation_mixin import (
+     QueryActivationMixin,
+     QueryActivationMixinV2,
+     QueryActivationMixinV3,
+ )
+ from .conv_mixin import ConvMixin, VConvMixin, SplitConvMixin
+-from .weighted_mixin import (
+-    WeightMixin,
+-    LocationWeightMixin,
+-    DeformableLocationWeightMixin,
+-)
++# from .weighted_mixin import (                          # missing upstream
++#     WeightMixin,
++#     LocationWeightMixin,
++#     DeformableLocationWeightMixin,
++# )
+ 
+ __all__ = [
+     "DebugRefMixin",
+-    "OffsetMixin",
++    # "OffsetMixin",
+     "QueryActivationMixin",
+     "QueryActivationMixinV2",
+     "QueryActivationMixinV3",
+     "ConvMixin",
+     "VConvMixin",
+     "SplitConvMixin",
+-    "WeightMixin",
+-    "LocationWeightMixin",
+-    "DeformableLocationWeightMixin",
++    # "WeightMixin",
++    # "LocationWeightMixin",
++    # "DeformableLocationWeightMixin",
+ ]
+diff --git a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/typing.py b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/typing.py
+index 814d062..3b49a74 100644
+--- a/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/typing.py
++++ b/projects/MAMBEV/mambev/modules/cross_hydra_blocks/mixins/typing.py
+@@ -5,7 +5,10 @@ import torch
+ from torch import nn
+ from torch.distributed import ProcessGroup
+ 
+-from projects.MAMBEV.mambev.modules.hydra_blocks.base_hydra_block import (
++# PATCH (stage 05): upstream import path is stale — there is no `hydra_blocks`
++# submodule and `base_hydra_block.py` was renamed to `base_block.py`.
++# These names live in cross_hydra_blocks/base_block.py.
++from projects.MAMBEV.mambev.modules.cross_hydra_blocks.base_block import (
+     ConvertMethodType,
+     FactoryKwargs,
+ )

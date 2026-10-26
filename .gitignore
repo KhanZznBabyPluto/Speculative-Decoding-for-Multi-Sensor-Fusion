@@ -5,6 +5,8 @@ __pycache__/
 *.so
 .Python
 .ignore
+archive/
+*.tex
 
 build/
 develop-eggs/

@@ -1,0 +1,27 @@
+[load] NuScenes v1.0-trainval metadata from /ibex/user/khangea/multisensor/data_full ...
+[load] devkit GT for the val split (~30 s) ...
+  budget=10   cov=0.827 prec=0.895 redun=0.5 q_car=34.64m claimed=0.6119 wasted=0.5874  (5s)
+  budget=20   cov=0.879 prec=0.846 redun=0.9 q_car=19.95m claimed=0.5560 wasted=0.5308  (6s)
+  budget=30   cov=0.887 prec=0.795 redun=1.2 q_car=12.73m claimed=0.5024 wasted=0.4769  (7s)
+  budget=50   cov=0.894 prec=0.666 redun=1.7 q_car=7.21m claimed=0.6315 wasted=0.6054  (8s)
+  budget=100  cov=0.893 prec=0.431 redun=2.2 q_car=4.20m claimed=0.5152 wasted=0.4891  (11s)
+  budget=200  cov=0.891 prec=0.304 redun=2.6 q_car=3.47m claimed=0.4209 wasted=0.3956  (14s)
+  budget=300  cov=0.891 prec=0.297 redun=2.6 q_car=3.43m claimed=0.3996 wasted=0.3744  (15s)
+
+============================================================================================
+EMISSION BUDGET SWEEP — coverage held at 0.90 by recalibrating the radius at every budget
+Radius is not free any more, so the budget is the knob that trades precision against space.
+============================================================================================
+ budget  env/frame  coverage  precision  redundancy  car q (m)   claimed   wasted  wast/clm
+--------------------------------------------------------------------------------------------
+     10       10.3     0.827      0.895         0.5      34.64    0.6119   0.5874     0.960
+     20       20.5     0.879      0.846         0.9      19.95    0.5560   0.5308     0.955
+     30       30.8     0.887      0.795         1.2      12.73    0.5024   0.4769     0.949
+     50       51.3     0.894      0.666         1.7       7.21    0.6315   0.6054     0.959
+    100      101.7     0.893      0.431         2.2       4.20    0.5152   0.4891     0.949
+    200      169.4     0.891      0.304         2.6       3.47    0.4209   0.3956     0.940
+    300      175.5     0.891      0.297         2.6       3.43    0.3996   0.3744     0.937
+--------------------------------------------------------------------------------------------
+Least space claimed at the SAME coverage: budget=300 (0.3996 of the disc, precision 0.297)
+
+Saved -> /ibex/user/khangea/multisensor/stages/08_risk_envelopes/dumps/precision_d1_key.json

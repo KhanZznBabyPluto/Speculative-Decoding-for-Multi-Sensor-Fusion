@@ -1,0 +1,52 @@
+Stage 05 Scalable-AI aggregate
+  rows      : 845
+  scenes    : 23
+
+Per-pair BEV cosine:
+  mean      : 0.8849
+  median    : 0.8827
+  p05 / p95 : 0.8050 / 0.9773
+  min / max : 0.7603 / 0.9891
+
+Per-pair BEV L2:
+  mean      : 6.3720
+  median    : 6.5974
+  p05 / p95 : 2.7740 / 8.7708
+
+Ego motion (per-pair):
+  ‖Δ‖ mean / p95 / max  : 3.122 m / 5.671 m / 6.675 m
+  |Δyaw| mean / p95 / max : 1.041° / 6.359° / 12.861°
+
+Top-1 detection score (per-pair):
+  anchor t  mean : 0.908
+  anchor tk mean : 0.909
+
+Hypothesis tests:
+  H1: P(cos > 0.85)             = 0.7893   (claim: > 0.95)
+  H1 strict (cos > 0.9)         = 0.3621
+  H1 very strict (cos > 0.95)   = 0.0982
+
+Per-scene cosine summary:
+  01452fbf: n= 37  mean=0.8815  min=0.7999  max=0.9875
+  265f002f: n= 37  mean=0.9210  min=0.8710  max=0.9450
+  2eb4d7f0: n= 36  mean=0.9090  min=0.8373  max=0.9807
+  2f56eb47: n= 37  mean=0.8961  min=0.8675  max=0.9155
+  3dd2be42: n= 37  mean=0.8456  min=0.7813  max=0.8679
+  3dd9ad3f: n= 37  mean=0.8600  min=0.8244  max=0.9289
+  41fde20f: n= 37  mean=0.9127  min=0.8909  max=0.9434
+  5a0dd890: n= 37  mean=0.8614  min=0.8153  max=0.9110
+  5af9c7f1: n= 36  mean=0.8565  min=0.8251  max=0.9092
+  68e79a88: n= 36  mean=0.8553  min=0.8222  max=0.9044
+  7365495b: n= 37  mean=0.8991  min=0.8780  max=0.9209
+  81321345: n= 37  mean=0.8879  min=0.8711  max=0.9041
+  8edbc310: n= 37  mean=0.8652  min=0.8371  max=0.8838
+  91c071bc: n= 37  mean=0.8888  min=0.8477  max=0.9361
+  afd73f70: n= 37  mean=0.9758  min=0.9598  max=0.9870
+  b4b82c4d: n= 36  mean=0.9437  min=0.9260  max=0.9613
+  b5186978: n= 37  mean=0.8222  min=0.7831  max=0.8631
+  c65c4acf: n= 36  mean=0.8982  min=0.8584  max=0.9363
+  cba3ddd5: n= 36  mean=0.8053  min=0.7603  max=0.8473
+  d1e57234: n= 37  mean=0.9346  min=0.8839  max=0.9891
+  ddb615d9: n= 37  mean=0.8525  min=0.7677  max=0.9102
+  e7ef871f: n= 37  mean=0.9204  min=0.8886  max=0.9804
+  efa5c96f: n= 37  mean=0.8593  min=0.8265  max=0.8771

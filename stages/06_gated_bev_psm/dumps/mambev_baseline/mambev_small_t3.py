@@ -1,0 +1,1304 @@
+_decoder_layers_ = 6
+_dim_ = 256
+_encoder_layers_ = 4
+_ffn_dim_ = 512
+_img_feat_levels_ = 3
+_img_neck_outs_ = 3
+_mamba_layers_ = 1
+_mono_img_feat_levels_ = 0
+_points_in_pillar_ = 4
+_pos_dim_ = 128
+backend_args = None
+batch_size = 2
+bev_h_ = 100
+bev_w_ = 100
+class_names = [
+    'car',
+    'truck',
+    'construction_vehicle',
+    'bus',
+    'trailer',
+    'barrier',
+    'motorcycle',
+    'bicycle',
+    'pedestrian',
+    'traffic_cone',
+]
+custom_hooks = [
+    dict(begin_iter=0, type='EMAHook'),
+]
+custom_imports = dict(
+    allow_failed_imports=False,
+    imports=[
+        'projects.MAMBEV.mambev',
+        'projects.PETR.petr',
+        'projects.mmcv_dep',
+        'projects.DETR3D.detr3d',
+        'projects.DETR_dep.detr',
+        'projects.BEVFormer.bevformer',
+    ])
+data_prefix = dict(
+    CAM_BACK='samples/CAM_BACK',
+    CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+    CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+    CAM_FRONT='samples/CAM_FRONT',
+    CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+    CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+    pts='samples/LIDAR_TOP')
+data_root = 'data/nuscenes/'
+dataset_type = 'NuScenesDatasetMultiFrame'
+default_hooks = dict(
+    checkpoint=dict(
+        interval=1, max_keep_ckpts=5, save_last=True, type='CheckpointHook'),
+    logger=dict(interval=100, type='LoggerHook'))
+default_scope = 'mmdet3d'
+deform_xa_cfg = dict(
+    batch_first=True,
+    deformable_attention=dict(
+        embed_dims=256,
+        im2col_step=96,
+        num_levels=3,
+        num_points=4,
+        type='MSDeformableAttention3D'),
+    embed_dims=256,
+    pc_range=[
+        -51.2,
+        -51.2,
+        -5.0,
+        51.2,
+        51.2,
+        3.0,
+    ],
+    type='SpatialCrossAttention')
+effective_batch_size = 32
+expand = 4
+file_client_args = dict(backend='local')
+frames = [
+    -2,
+    -1,
+    0,
+]
+grad_accum = 2
+group_detr = 11
+hydra_cfg = dict(
+    A_init_range=(
+        1,
+        16,
+    ),
+    D_has_hdim=False,
+    average_slots=True,
+    bias=False,
+    chunk_size=32,
+    conv_bias=True,
+    conv_init=None,
+    d_conv=7,
+    d_model=256,
+    d_ssm=None,
+    d_state=32,
+    dropout=0.1,
+    dt_bias=True,
+    dt_init_floor=0.0001,
+    dt_limit=(
+        0.0,
+        inf,
+    ),
+    dt_max=0.1,
+    dt_min=0.001,
+    expand=1,
+    feature_levels=[
+        0,
+    ],
+    headdim=16,
+    ngroups=1,
+    norm_before_gate=False,
+    q_zero_params=dict(dt=True),
+    rmsnorm=True,
+    sequence_parallel=True,
+    traversal_methods=[
+        'tl0snake',
+    ],
+    type='PrePostHydraBlock',
+    use_post_norm=True,
+    v_zero_params=dict(z=True),
+    x_og_activation=False)
+hydra_self_attn = dict(
+    bev_h=100,
+    bev_w=100,
+    embed_dims=256,
+    mamba_cfg=dict(
+        chunk_size=256,
+        d_conv=7,
+        d_model=256,
+        d_state=128,
+        expand=4,
+        headdim=128,
+        ngroups=1,
+        type='Hydra'),
+    proj_drop=0.05,
+    traversal_methods=[
+        'tl0snake',
+    ],
+    type='TraversalSelfAttnBlock')
+img_norm_cfg = dict(
+    mean=[
+        103.53,
+        116.28,
+        123.675,
+    ], std=[
+        1.0,
+        1.0,
+        1.0,
+    ], to_rgb=False)
+in_channels = [
+    512,
+    1024,
+    2048,
+]
+input_modality = dict(
+    use_camera=True,
+    use_external=True,
+    use_lidar=False,
+    use_map=False,
+    use_radar=False)
+iter_mult = 2.0
+launcher = 'none'
+load_from = '/ibex/user/khangea/multisensor/checkpoints/mambev/mambev_small_detector.pth'
+max_lr = 0.0008
+meta_keys = (
+    'ego2global',
+    'lidar2ego',
+    'lidar2img',
+    'lidar2cam',
+    'cam2img',
+    'axis_align_matrix',
+    'mono_input_dict',
+    'mono_ann_idx',
+    'sample_idx',
+    'frame_idx',
+    'scene_token',
+    'aug_param',
+    'box_mode_3d',
+    'box_type_3d',
+    'pad_shape',
+    'ori_shape',
+    'img_shape',
+    'crop_offset',
+    'img_crop_offset',
+    'img_norm_cfg',
+    'img_path',
+    'resize_img_shape',
+    'scale_factor',
+    'filename',
+    'num_pts_feats',
+    'pts_filename',
+    'timestamp',
+)
+metainfo = dict(classes=[
+    'car',
+    'truck',
+    'construction_vehicle',
+    'bus',
+    'trailer',
+    'barrier',
+    'motorcycle',
+    'bicycle',
+    'pedestrian',
+    'traffic_cone',
+])
+model = dict(
+    embed_dim=256,
+    frames=[
+        -2,
+        -1,
+        0,
+    ],
+    img_backbone=dict(
+        dcn=dict(deform_groups=1, fallback_on_stride=False, type='DCNv2'),
+        depth=101,
+        frozen_stages=1,
+        init_cfg=None,
+        norm_cfg=dict(requires_grad=False, type='BN2d'),
+        norm_eval=True,
+        num_stages=4,
+        out_indices=[
+            1,
+            2,
+            3,
+        ],
+        stage_with_dcn=(
+            False,
+            False,
+            True,
+            True,
+        ),
+        style='caffe',
+        type='mmdet.ResNet'),
+    img_neck=dict(
+        add_extra_convs='on_output',
+        in_channels=[
+            512,
+            1024,
+            2048,
+        ],
+        num_outs=3,
+        out_channels=256,
+        relu_before_extra_convs=True,
+        start_level=0,
+        type='CPFPN'),
+    num_levels=3,
+    num_mono_levels=0,
+    pts_bbox_head=dict(
+        as_two_stage=False,
+        bbox_coder=dict(
+            max_num=300,
+            num_classes=10,
+            pc_range=[
+                -51.2,
+                -51.2,
+                -5.0,
+                51.2,
+                51.2,
+                3.0,
+            ],
+            post_center_range=[
+                -61.2,
+                -61.2,
+                -10.0,
+                61.2,
+                61.2,
+                10.0,
+            ],
+            type='mmdet3d.NMSFreeCoder',
+            voxel_size=[
+                1.024,
+                1.024,
+                8,
+            ]),
+        bev_h=100,
+        bev_w=100,
+        encoder_self_attn=True,
+        group_detr=11,
+        in_channels=256,
+        loss_bbox=dict(beta=1.0, loss_weight=0.75, type='mmdet.SmoothL1Loss'),
+        loss_cls=dict(
+            alpha=0.25,
+            gamma=2.0,
+            loss_weight=2.0,
+            type='mmdet.FocalLoss',
+            use_sigmoid=True),
+        loss_iou=dict(loss_weight=0.0, type='mmdet.GIoULoss'),
+        num_classes=10,
+        num_query=900,
+        positional_encoding=dict(
+            col_num_embed=100,
+            num_feats=128,
+            row_num_embed=100,
+            type='mmdet.LearnedPositionalEncoding'),
+        sync_cls_avg_factor=True,
+        transformer=dict(
+            decoder=dict(
+                num_layers=6,
+                return_intermediate=True,
+                transformerlayers=dict(
+                    cross_attn_cfg=dict(
+                        batch_first=True,
+                        dropout=0.1,
+                        embed_dims=256,
+                        im2col_step=64,
+                        num_heads=8,
+                        num_levels=1,
+                        num_points=4,
+                        value_proj_ratio=1.0),
+                    ffn_cfg=dict(
+                        act_cfg=dict(inplace=True, type='ReLU'),
+                        embed_dims=256,
+                        feedforward_channels=512,
+                        ffn_drop=0.1,
+                        num_fcs=2),
+                    self_attn_cfg=dict(
+                        batch_first=True,
+                        dropout=0.1,
+                        embed_dims=256,
+                        group=11,
+                        num_heads=8),
+                    type='GroupDeformableDetrTransformerDecoderLayer'),
+                type='DetectionTransformerDecoder'),
+            embed_dims=256,
+            encoder=dict(
+                num_layers=4,
+                num_points_in_pillar=4,
+                pc_range=[
+                    -51.2,
+                    -51.2,
+                    -5.0,
+                    51.2,
+                    51.2,
+                    3.0,
+                ],
+                return_intermediate=False,
+                transformerlayers=dict(
+                    attn_cfgs=[
+                        dict(
+                            A_init_range=(
+                                1,
+                                16,
+                            ),
+                            D_has_hdim=False,
+                            average_slots=True,
+                            bias=False,
+                            chunk_size=32,
+                            conv_bias=True,
+                            conv_init=None,
+                            d_conv=7,
+                            d_model=256,
+                            d_ssm=None,
+                            d_state=32,
+                            dropout=0.1,
+                            dt_bias=True,
+                            dt_init_floor=0.0001,
+                            dt_limit=(
+                                0.0,
+                                inf,
+                            ),
+                            dt_max=0.1,
+                            dt_min=0.001,
+                            expand=1,
+                            feature_levels=[
+                                0,
+                            ],
+                            headdim=16,
+                            ngroups=1,
+                            norm_before_gate=False,
+                            q_zero_params=dict(dt=True),
+                            rmsnorm=True,
+                            sequence_parallel=True,
+                            traversal_methods=[
+                                'tl0snake',
+                            ],
+                            type='PrePostHydraBlock',
+                            use_post_norm=True,
+                            v_zero_params=dict(z=True),
+                            x_og_activation=False),
+                        dict(
+                            bev_h=100,
+                            bev_w=100,
+                            embed_dims=256,
+                            mamba_cfg=dict(
+                                chunk_size=256,
+                                d_conv=7,
+                                d_model=256,
+                                d_state=128,
+                                expand=4,
+                                headdim=128,
+                                ngroups=1,
+                                type='Hydra'),
+                            proj_drop=0.05,
+                            traversal_methods=[
+                                'tl0snake',
+                            ],
+                            type='TraversalSelfAttnBlock'),
+                        dict(
+                            batch_first=True,
+                            deformable_attention=dict(
+                                embed_dims=256,
+                                im2col_step=96,
+                                num_levels=3,
+                                num_points=4,
+                                type='MSDeformableAttention3D'),
+                            embed_dims=256,
+                            pc_range=[
+                                -51.2,
+                                -51.2,
+                                -5.0,
+                                51.2,
+                                51.2,
+                                3.0,
+                            ],
+                            type='SpatialCrossAttention'),
+                    ],
+                    batch_first=True,
+                    feedforward_channels=512,
+                    ffn_dropout=0.1,
+                    norm_cfg=dict(type='LN'),
+                    operation_order=[
+                        'cross_attn',
+                        'mamba_self_attn',
+                        'cross_attn',
+                        'norm',
+                    ],
+                    type='BEVFormerLayerV3'),
+                type='BEVFormerEncoderV3'),
+            frames=[
+                -2,
+                -1,
+                0,
+            ],
+            num_cams=6,
+            num_feature_levels=3,
+            num_fusion=3,
+            type='PerceptionTransformerV3',
+            use_cams_embeds=True),
+        type='BEVFormerHead_GroupDETRV3',
+        with_box_refine=True),
+    train_cfg=dict(
+        pts=dict(
+            assigner=dict(
+                cls_cost=dict(type='mmdet.FocalLossCost', weight=2.0),
+                iou_cost=dict(type='mmdet.IoUCost', weight=0.0),
+                pc_range=[
+                    -51.2,
+                    -51.2,
+                    -5.0,
+                    51.2,
+                    51.2,
+                    3.0,
+                ],
+                reg_cost=dict(type='mmdet3d.SmoothL1Cost', weight=0.75),
+                type='mmdet3d.HungarianAssigner3D'),
+            grid_size=[
+                512,
+                512,
+                1,
+            ],
+            out_size_factor=4,
+            point_cloud_range=[
+                -51.2,
+                -51.2,
+                -5.0,
+                51.2,
+                51.2,
+                3.0,
+            ],
+            voxel_size=[
+                1.024,
+                1.024,
+                8,
+            ])),
+    type='MamBEV',
+    use_grid_mask=True,
+    with_bptt=False)
+model_wrapper_cfg = dict(
+    find_unused_parameters=True, type='MMDistributedDataParallel')
+ntraversals = 1
+num_gpus = 8
+optim_wrapper = dict(
+    accumulative_counts=2,
+    clip_grad=dict(
+        error_if_nonfinite=True, max_norm=35, norm_type=2, type='norm'),
+    loss_scale=512.0,
+    optimizer=dict(lr=0.0008, type='AdamW', weight_decay=0.01),
+    paramwise_cfg=dict(
+        custom_keys=dict(
+            A_log=dict(decay_mult=0.0),
+            D=dict(decay_mult=0.0),
+            dt_bias=dict(decay_mult=0.0),
+            img_backbone=dict(lr_mult=0.1),
+            sampling_offsets=dict(lr_mult=0.1))),
+    type='AmpOptimWrapper')
+optimizer = dict(lr=0.0008, type='AdamW', weight_decay=0.01)
+out_indices = [
+    1,
+    2,
+    3,
+]
+param_scheduler = [
+    dict(
+        by_epoch=False,
+        end=6329,
+        start_factor=0.3333333333333333,
+        type='LinearLR'),
+    dict(begin=3, by_epoch=True, eta_min=8e-05, type='CosineAnnealingLR'),
+]
+point_cloud_range = [
+    -51.2,
+    -51.2,
+    -5.0,
+    51.2,
+    51.2,
+    3.0,
+]
+randomness = dict(seed=0)
+self_traversals = [
+    'tl0snake',
+]
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    collate_fn=dict(type='default_collate'),
+    dataset=dict(
+        ann_file='nuscenes_infos_temporal_val.pkl',
+        backend_args=None,
+        box_type_3d='LiDAR',
+        data_prefix=dict(
+            CAM_BACK='samples/CAM_BACK',
+            CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+            CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+            CAM_FRONT='samples/CAM_FRONT',
+            CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+            CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+            pts='samples/LIDAR_TOP'),
+        data_root='data/nuscenes/',
+        frames=[
+            -2,
+            -1,
+            0,
+        ],
+        indices=None,
+        load_type='frame_based',
+        metainfo=dict(classes=[
+            'car',
+            'truck',
+            'construction_vehicle',
+            'bus',
+            'trailer',
+            'barrier',
+            'motorcycle',
+            'bicycle',
+            'pedestrian',
+            'traffic_cone',
+        ]),
+        modality=dict(
+            use_camera=True,
+            use_external=True,
+            use_lidar=False,
+            use_map=False,
+            use_radar=False),
+        pipeline=[
+            dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+            dict(
+                mean=[
+                    103.53,
+                    116.28,
+                    123.675,
+                ],
+                std=[
+                    1.0,
+                    1.0,
+                    1.0,
+                ],
+                to_rgb=False,
+                type='NormalizeMultiviewImage'),
+            dict(size_divisor=32, type='PadMultiViewImage'),
+            dict(
+                flip=False,
+                img_scale=(
+                    1600,
+                    900,
+                ),
+                pts_scale_ratio=1,
+                transforms=[
+                    dict(
+                        scales=[
+                            0.8,
+                        ], type='RandomScaleImageMultiViewImage'),
+                    dict(size_divisor=32, type='PadMultiViewImage'),
+                    dict(
+                        keys=[
+                            'gt_bboxes_3d',
+                            'gt_labels_3d',
+                            'img',
+                        ],
+                        meta_keys=(
+                            'ego2global',
+                            'lidar2ego',
+                            'lidar2img',
+                            'lidar2cam',
+                            'cam2img',
+                            'axis_align_matrix',
+                            'mono_input_dict',
+                            'mono_ann_idx',
+                            'sample_idx',
+                            'frame_idx',
+                            'scene_token',
+                            'aug_param',
+                            'box_mode_3d',
+                            'box_type_3d',
+                            'pad_shape',
+                            'ori_shape',
+                            'img_shape',
+                            'crop_offset',
+                            'img_crop_offset',
+                            'img_norm_cfg',
+                            'img_path',
+                            'resize_img_shape',
+                            'scale_factor',
+                            'filename',
+                            'num_pts_feats',
+                            'pts_filename',
+                            'timestamp',
+                        ),
+                        type='mmdet3d.Pack3DDetInputs'),
+                ],
+                type='mmdet3d.MultiScaleFlipAug3D'),
+        ],
+        test_mode=True,
+        type='NuScenesDatasetMultiFrame',
+        use_valid_flag=True),
+    drop_last=False,
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    ann_file='data/nuscenes/nuscenes_infos_temporal_val.pkl',
+    backend_args=None,
+    data_root='data/nuscenes/',
+    metric='bbox',
+    type='mmdet3d.CustomNuScenesMetric')
+test_pipeline = [
+    dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+    dict(
+        mean=[
+            103.53,
+            116.28,
+            123.675,
+        ],
+        std=[
+            1.0,
+            1.0,
+            1.0,
+        ],
+        to_rgb=False,
+        type='NormalizeMultiviewImage'),
+    dict(size_divisor=32, type='PadMultiViewImage'),
+    dict(
+        flip=False,
+        img_scale=(
+            1600,
+            900,
+        ),
+        pts_scale_ratio=1,
+        transforms=[
+            dict(scales=[
+                0.8,
+            ], type='RandomScaleImageMultiViewImage'),
+            dict(size_divisor=32, type='PadMultiViewImage'),
+            dict(
+                keys=[
+                    'gt_bboxes_3d',
+                    'gt_labels_3d',
+                    'img',
+                ],
+                meta_keys=(
+                    'ego2global',
+                    'lidar2ego',
+                    'lidar2img',
+                    'lidar2cam',
+                    'cam2img',
+                    'axis_align_matrix',
+                    'mono_input_dict',
+                    'mono_ann_idx',
+                    'sample_idx',
+                    'frame_idx',
+                    'scene_token',
+                    'aug_param',
+                    'box_mode_3d',
+                    'box_type_3d',
+                    'pad_shape',
+                    'ori_shape',
+                    'img_shape',
+                    'crop_offset',
+                    'img_crop_offset',
+                    'img_norm_cfg',
+                    'img_path',
+                    'resize_img_shape',
+                    'scale_factor',
+                    'filename',
+                    'num_pts_feats',
+                    'pts_filename',
+                    'timestamp',
+                ),
+                type='mmdet3d.Pack3DDetInputs'),
+        ],
+        type='mmdet3d.MultiScaleFlipAug3D'),
+]
+total_epochs = 36
+total_steps = 1012680
+train_cfg = dict(max_epochs=36, type='EpochBasedTrainLoop', val_interval=38)
+train_dataloader = dict(
+    batch_size=2,
+    collate_fn=dict(type='default_collate'),
+    dataset=dict(
+        ann_file='nuscenes_infos_temporal_train.pkl',
+        backend_args=None,
+        box_type_3d='LiDAR',
+        data_prefix=dict(
+            CAM_BACK='samples/CAM_BACK',
+            CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+            CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+            CAM_FRONT='samples/CAM_FRONT',
+            CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+            CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+            pts='samples/LIDAR_TOP'),
+        data_root='data/nuscenes/',
+        frames=[
+            -2,
+            -1,
+            0,
+        ],
+        load_type='frame_based',
+        metainfo=dict(classes=[
+            'car',
+            'truck',
+            'construction_vehicle',
+            'bus',
+            'trailer',
+            'barrier',
+            'motorcycle',
+            'bicycle',
+            'pedestrian',
+            'traffic_cone',
+        ]),
+        modality=dict(
+            use_camera=True,
+            use_external=True,
+            use_lidar=False,
+            use_map=False,
+            use_radar=False),
+        pipeline=[
+            dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+            dict(type='PhotoMetricDistortionMultiViewImage'),
+            dict(
+                type='mmdet3d.LoadAnnotations3D',
+                with_attr_label=False,
+                with_bbox_3d=True,
+                with_label_3d=True),
+            dict(
+                point_cloud_range=[
+                    -51.2,
+                    -51.2,
+                    -5.0,
+                    51.2,
+                    51.2,
+                    3.0,
+                ],
+                type='mmdet3d.ObjectRangeFilter'),
+            dict(
+                classes=[
+                    'car',
+                    'truck',
+                    'construction_vehicle',
+                    'bus',
+                    'trailer',
+                    'barrier',
+                    'motorcycle',
+                    'bicycle',
+                    'pedestrian',
+                    'traffic_cone',
+                ],
+                type='mmdet3d.ObjectNameFilter'),
+            dict(
+                mean=[
+                    103.53,
+                    116.28,
+                    123.675,
+                ],
+                std=[
+                    1.0,
+                    1.0,
+                    1.0,
+                ],
+                to_rgb=False,
+                type='NormalizeMultiviewImage'),
+            dict(scales=[
+                0.8,
+            ], type='RandomScaleImageMultiViewImage'),
+            dict(size_divisor=32, type='PadMultiViewImage'),
+            dict(
+                keys=[
+                    'gt_bboxes_3d',
+                    'gt_labels_3d',
+                    'img',
+                ],
+                meta_keys=(
+                    'ego2global',
+                    'lidar2ego',
+                    'lidar2img',
+                    'lidar2cam',
+                    'cam2img',
+                    'axis_align_matrix',
+                    'mono_input_dict',
+                    'mono_ann_idx',
+                    'sample_idx',
+                    'frame_idx',
+                    'scene_token',
+                    'aug_param',
+                    'box_mode_3d',
+                    'box_type_3d',
+                    'pad_shape',
+                    'ori_shape',
+                    'img_shape',
+                    'crop_offset',
+                    'img_crop_offset',
+                    'img_norm_cfg',
+                    'img_path',
+                    'resize_img_shape',
+                    'scale_factor',
+                    'filename',
+                    'num_pts_feats',
+                    'pts_filename',
+                    'timestamp',
+                ),
+                type='mmdet3d.Pack3DDetInputs'),
+        ],
+        test_mode=False,
+        type='NuScenesDatasetMultiFrame',
+        use_valid_flag=True),
+    drop_last=False,
+    num_workers=10,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='DefaultSampler'))
+train_dataset = dict(
+    ann_file='nuscenes_infos_temporal_train.pkl',
+    backend_args=None,
+    box_type_3d='LiDAR',
+    data_prefix=dict(
+        CAM_BACK='samples/CAM_BACK',
+        CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+        CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+        CAM_FRONT='samples/CAM_FRONT',
+        CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+        CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+        pts='samples/LIDAR_TOP'),
+    data_root='data/nuscenes/',
+    frames=[
+        -2,
+        -1,
+        0,
+    ],
+    load_type='frame_based',
+    metainfo=dict(classes=[
+        'car',
+        'truck',
+        'construction_vehicle',
+        'bus',
+        'trailer',
+        'barrier',
+        'motorcycle',
+        'bicycle',
+        'pedestrian',
+        'traffic_cone',
+    ]),
+    modality=dict(
+        use_camera=True,
+        use_external=True,
+        use_lidar=False,
+        use_map=False,
+        use_radar=False),
+    pipeline=[
+        dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+        dict(type='PhotoMetricDistortionMultiViewImage'),
+        dict(
+            type='mmdet3d.LoadAnnotations3D',
+            with_attr_label=False,
+            with_bbox_3d=True,
+            with_label_3d=True),
+        dict(
+            point_cloud_range=[
+                -51.2,
+                -51.2,
+                -5.0,
+                51.2,
+                51.2,
+                3.0,
+            ],
+            type='mmdet3d.ObjectRangeFilter'),
+        dict(
+            classes=[
+                'car',
+                'truck',
+                'construction_vehicle',
+                'bus',
+                'trailer',
+                'barrier',
+                'motorcycle',
+                'bicycle',
+                'pedestrian',
+                'traffic_cone',
+            ],
+            type='mmdet3d.ObjectNameFilter'),
+        dict(
+            mean=[
+                103.53,
+                116.28,
+                123.675,
+            ],
+            std=[
+                1.0,
+                1.0,
+                1.0,
+            ],
+            to_rgb=False,
+            type='NormalizeMultiviewImage'),
+        dict(scales=[
+            0.8,
+        ], type='RandomScaleImageMultiViewImage'),
+        dict(size_divisor=32, type='PadMultiViewImage'),
+        dict(
+            keys=[
+                'gt_bboxes_3d',
+                'gt_labels_3d',
+                'img',
+            ],
+            meta_keys=(
+                'ego2global',
+                'lidar2ego',
+                'lidar2img',
+                'lidar2cam',
+                'cam2img',
+                'axis_align_matrix',
+                'mono_input_dict',
+                'mono_ann_idx',
+                'sample_idx',
+                'frame_idx',
+                'scene_token',
+                'aug_param',
+                'box_mode_3d',
+                'box_type_3d',
+                'pad_shape',
+                'ori_shape',
+                'img_shape',
+                'crop_offset',
+                'img_crop_offset',
+                'img_norm_cfg',
+                'img_path',
+                'resize_img_shape',
+                'scale_factor',
+                'filename',
+                'num_pts_feats',
+                'pts_filename',
+                'timestamp',
+            ),
+            type='mmdet3d.Pack3DDetInputs'),
+    ],
+    test_mode=False,
+    type='NuScenesDatasetMultiFrame',
+    use_valid_flag=True)
+train_pipeline = [
+    dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+    dict(type='PhotoMetricDistortionMultiViewImage'),
+    dict(
+        type='mmdet3d.LoadAnnotations3D',
+        with_attr_label=False,
+        with_bbox_3d=True,
+        with_label_3d=True),
+    dict(
+        point_cloud_range=[
+            -51.2,
+            -51.2,
+            -5.0,
+            51.2,
+            51.2,
+            3.0,
+        ],
+        type='mmdet3d.ObjectRangeFilter'),
+    dict(
+        classes=[
+            'car',
+            'truck',
+            'construction_vehicle',
+            'bus',
+            'trailer',
+            'barrier',
+            'motorcycle',
+            'bicycle',
+            'pedestrian',
+            'traffic_cone',
+        ],
+        type='mmdet3d.ObjectNameFilter'),
+    dict(
+        mean=[
+            103.53,
+            116.28,
+            123.675,
+        ],
+        std=[
+            1.0,
+            1.0,
+            1.0,
+        ],
+        to_rgb=False,
+        type='NormalizeMultiviewImage'),
+    dict(scales=[
+        0.8,
+    ], type='RandomScaleImageMultiViewImage'),
+    dict(size_divisor=32, type='PadMultiViewImage'),
+    dict(
+        keys=[
+            'gt_bboxes_3d',
+            'gt_labels_3d',
+            'img',
+        ],
+        meta_keys=(
+            'ego2global',
+            'lidar2ego',
+            'lidar2img',
+            'lidar2cam',
+            'cam2img',
+            'axis_align_matrix',
+            'mono_input_dict',
+            'mono_ann_idx',
+            'sample_idx',
+            'frame_idx',
+            'scene_token',
+            'aug_param',
+            'box_mode_3d',
+            'box_type_3d',
+            'pad_shape',
+            'ori_shape',
+            'img_shape',
+            'crop_offset',
+            'img_crop_offset',
+            'img_norm_cfg',
+            'img_path',
+            'resize_img_shape',
+            'scale_factor',
+            'filename',
+            'num_pts_feats',
+            'pts_filename',
+            'timestamp',
+        ),
+        type='mmdet3d.Pack3DDetInputs'),
+]
+traversal_methods = [
+    'tl0snake',
+]
+val_batch_size = 1
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    collate_fn=dict(type='default_collate'),
+    dataset=dict(
+        ann_file='nuscenes_infos_temporal_val.pkl',
+        backend_args=None,
+        box_type_3d='LiDAR',
+        data_prefix=dict(
+            CAM_BACK='samples/CAM_BACK',
+            CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+            CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+            CAM_FRONT='samples/CAM_FRONT',
+            CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+            CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+            pts='samples/LIDAR_TOP'),
+        data_root='data/nuscenes/',
+        frames=[
+            -2,
+            -1,
+            0,
+        ],
+        indices=None,
+        load_type='frame_based',
+        metainfo=dict(classes=[
+            'car',
+            'truck',
+            'construction_vehicle',
+            'bus',
+            'trailer',
+            'barrier',
+            'motorcycle',
+            'bicycle',
+            'pedestrian',
+            'traffic_cone',
+        ]),
+        modality=dict(
+            use_camera=True,
+            use_external=True,
+            use_lidar=False,
+            use_map=False,
+            use_radar=False),
+        pipeline=[
+            dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+            dict(
+                mean=[
+                    103.53,
+                    116.28,
+                    123.675,
+                ],
+                std=[
+                    1.0,
+                    1.0,
+                    1.0,
+                ],
+                to_rgb=False,
+                type='NormalizeMultiviewImage'),
+            dict(size_divisor=32, type='PadMultiViewImage'),
+            dict(
+                flip=False,
+                img_scale=(
+                    1600,
+                    900,
+                ),
+                pts_scale_ratio=1,
+                transforms=[
+                    dict(
+                        scales=[
+                            0.8,
+                        ], type='RandomScaleImageMultiViewImage'),
+                    dict(size_divisor=32, type='PadMultiViewImage'),
+                    dict(
+                        keys=[
+                            'gt_bboxes_3d',
+                            'gt_labels_3d',
+                            'img',
+                        ],
+                        meta_keys=(
+                            'ego2global',
+                            'lidar2ego',
+                            'lidar2img',
+                            'lidar2cam',
+                            'cam2img',
+                            'axis_align_matrix',
+                            'mono_input_dict',
+                            'mono_ann_idx',
+                            'sample_idx',
+                            'frame_idx',
+                            'scene_token',
+                            'aug_param',
+                            'box_mode_3d',
+                            'box_type_3d',
+                            'pad_shape',
+                            'ori_shape',
+                            'img_shape',
+                            'crop_offset',
+                            'img_crop_offset',
+                            'img_norm_cfg',
+                            'img_path',
+                            'resize_img_shape',
+                            'scale_factor',
+                            'filename',
+                            'num_pts_feats',
+                            'pts_filename',
+                            'timestamp',
+                        ),
+                        type='mmdet3d.Pack3DDetInputs'),
+                ],
+                type='mmdet3d.MultiScaleFlipAug3D'),
+        ],
+        test_mode=True,
+        type='NuScenesDatasetMultiFrame',
+        use_valid_flag=True),
+    drop_last=False,
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_dataset = dict(
+    ann_file='nuscenes_infos_temporal_val.pkl',
+    backend_args=None,
+    box_type_3d='LiDAR',
+    data_prefix=dict(
+        CAM_BACK='samples/CAM_BACK',
+        CAM_BACK_LEFT='samples/CAM_BACK_LEFT',
+        CAM_BACK_RIGHT='samples/CAM_BACK_RIGHT',
+        CAM_FRONT='samples/CAM_FRONT',
+        CAM_FRONT_LEFT='samples/CAM_FRONT_LEFT',
+        CAM_FRONT_RIGHT='samples/CAM_FRONT_RIGHT',
+        pts='samples/LIDAR_TOP'),
+    data_root='data/nuscenes/',
+    frames=[
+        -2,
+        -1,
+        0,
+    ],
+    indices=500,
+    load_type='frame_based',
+    metainfo=dict(classes=[
+        'car',
+        'truck',
+        'construction_vehicle',
+        'bus',
+        'trailer',
+        'barrier',
+        'motorcycle',
+        'bicycle',
+        'pedestrian',
+        'traffic_cone',
+    ]),
+    modality=dict(
+        use_camera=True,
+        use_external=True,
+        use_lidar=False,
+        use_map=False,
+        use_radar=False),
+    pipeline=[
+        dict(to_float32=True, type='mmdet3d.LoadMultiViewImageFromFiles'),
+        dict(
+            mean=[
+                103.53,
+                116.28,
+                123.675,
+            ],
+            std=[
+                1.0,
+                1.0,
+                1.0,
+            ],
+            to_rgb=False,
+            type='NormalizeMultiviewImage'),
+        dict(size_divisor=32, type='PadMultiViewImage'),
+        dict(
+            flip=False,
+            img_scale=(
+                1600,
+                900,
+            ),
+            pts_scale_ratio=1,
+            transforms=[
+                dict(scales=[
+                    0.8,
+                ], type='RandomScaleImageMultiViewImage'),
+                dict(size_divisor=32, type='PadMultiViewImage'),
+                dict(
+                    keys=[
+                        'gt_bboxes_3d',
+                        'gt_labels_3d',
+                        'img',
+                    ],
+                    meta_keys=(
+                        'ego2global',
+                        'lidar2ego',
+                        'lidar2img',
+                        'lidar2cam',
+                        'cam2img',
+                        'axis_align_matrix',
+                        'mono_input_dict',
+                        'mono_ann_idx',
+                        'sample_idx',
+                        'frame_idx',
+                        'scene_token',
+                        'aug_param',
+                        'box_mode_3d',
+                        'box_type_3d',
+                        'pad_shape',
+                        'ori_shape',
+                        'img_shape',
+                        'crop_offset',
+                        'img_crop_offset',
+                        'img_norm_cfg',
+                        'img_path',
+                        'resize_img_shape',
+                        'scale_factor',
+                        'filename',
+                        'num_pts_feats',
+                        'pts_filename',
+                        'timestamp',
+                    ),
+                    type='mmdet3d.Pack3DDetInputs'),
+            ],
+            type='mmdet3d.MultiScaleFlipAug3D'),
+    ],
+    test_mode=True,
+    type='NuScenesDatasetMultiFrame',
+    use_valid_flag=True)
+val_evaluator = dict(
+    ann_file='data/nuscenes/nuscenes_infos_temporal_val.pkl',
+    backend_args=None,
+    data_root='data/nuscenes/',
+    metric='bbox',
+    type='mmdet3d.CustomNuScenesMetric')
+visualizer = dict(type='Visualizer', vis_backends=[])
+voxel_size = [
+    1.024,
+    1.024,
+    8,
+]
+warmup_end = 6329
+work_dir = '/ibex/user/khangea/multisensor/stages/06_gated_bev_psm/dumps/mambev_baseline'

@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Data
+data/
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Outputs
+outputs/
+checkpoints/
+logs/
+results/
+wandb/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model weights
+*.pth
+*.ckpt
+*.pt
+*.safetensors
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Vendored third-party clones (local edits are in vendor_patches/)
+StreamPETR/
+MamBEV/
+mmdetection3d/
+
+# Data and large artifacts
+data_full/
+data_withtrain/
+archive/job_telemetry/
+**/work_dirs/
+*.tar
+*.npz
+
+# Raw per-sample detections (~90 MB each, regenerable; kept on disk, not in git).
+# metrics_summary.json and all analysis/bootstrap JSONs stay tracked.
+**/results_nusc.json
+**/pts_bbox/plots/
+**/pts_bbox/metrics_details.json
